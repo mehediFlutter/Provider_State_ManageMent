@@ -6,6 +6,8 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -33,13 +35,8 @@ class _SocketIOExampleState extends State<SocketIOExample> {
   void initSocket() {
     print('Initializing socket...'); // Debug print
     socket = IO.io('https://websocket.pilotbazar.xyz', <String, dynamic>{
-      // "upgrades": ["websocket"],
       'transports': ['websocket'],
-
       'autoConnect': false,
-      'forceNew': true,
-      'reconnectionAttempts': 5,
-      'debug': true, // Enable debug logging
     });
 
     socket.onConnect((_) {
@@ -51,9 +48,6 @@ class _SocketIOExampleState extends State<SocketIOExample> {
 
     socket.onConnectError((error) {
       print('Connect error: $error'); // Debug print
-      setState(() {
-        _connectionStatus = 'Connection Error: $error';
-      });
     });
 
     socket.onDisconnect((_) {
@@ -63,11 +57,11 @@ class _SocketIOExampleState extends State<SocketIOExample> {
       });
     });
 
-    socket.on('me', (data) {
+    socket.on('newMessage', (data) {
       print('Received message: $data'); // Debug print
-      // setState(() {
-      //   _lastMessage = data['message'];
-      // });
+      setState(() {
+        _lastMessage = data['message'];
+      });
     });
 
     print('Attempting to connect...'); // Debug print
@@ -97,7 +91,6 @@ class _SocketIOExampleState extends State<SocketIOExample> {
               onPressed: sendMessage,
               child: Text('Send Message'),
             ),
-            TextField(),
           ],
         ),
       ),
